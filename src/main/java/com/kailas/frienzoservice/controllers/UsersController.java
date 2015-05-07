@@ -30,7 +30,7 @@ public class UsersController {
 
 		DatabaseManager.getInstance().addUser(user);
 		return user;
-error
+
 		// throw new RuntimeException("Fail");
 	}
 
