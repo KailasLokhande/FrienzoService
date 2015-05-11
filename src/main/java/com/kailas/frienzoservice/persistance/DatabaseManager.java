@@ -107,8 +107,7 @@ public class DatabaseManager {
 	public Map<String, User> getAllUsers() throws FileNotFoundException {
 		// name, id, photoUrlGoogle, photoUrlFacebook, phoneNumber, email,
 		// gPlusProfileUrl, fbProfileUrl,
-		if (oneReadFromFSDone)
-			return USERS;
+		
 
 		Scanner scanner = new Scanner(USER_DB);
 		while (scanner.hasNextLine()) {
@@ -128,7 +127,8 @@ public class DatabaseManager {
 			USERS.put(userFields[1], user);
 		}
 		scanner.close();
-
+System.out.println("Users: "+USERS);
+System.out.println("Locations: "+LAST_KNOWN_LOCATIONS);
 		Scanner locationScanner = new Scanner(LOCATION_DB);
 		while (locationScanner.hasNextLine()) {
 			String locationData = locationScanner.nextLine();
@@ -136,9 +136,11 @@ public class DatabaseManager {
 			Location location = new Location();
 			location.setLatitude(Double.parseDouble(locationFields[1]));
 			location.setLongitude(Double.parseDouble(locationFields[2]));
+			System.out.println("Checking id " + locationFields[0]);
 			if (USERS.containsKey(locationFields[0])) {
 				USERS.get(locationFields[0]).setLastKnownLocation(location);
 				LAST_KNOWN_LOCATIONS.put(locationFields[0], location);
+				System.out.println("Added location");
 			}
 		}
 		locationScanner.close();
@@ -166,7 +168,20 @@ public class DatabaseManager {
 					getAllUsers();
 			}
 		}
+		if (location == null)
+			return;
+		StringBuilder locationBuilder = new StringBuilder();
+		locationBuilder.append(userId).append(DELIMITER)
+				.append(location.getLatitude()).append(DELIMITER)
+				.append(location.getLongitude());
+		String locationData = locationBuilder.toString();
 
+		synchronized (LOCATION_DB) {
+			PrintWriter printWriter = new PrintWriter(LOCATION_DB);
+			printWriter.println(locationData);
+			printWriter.flush();
+			printWriter.close();
+		}
 		LAST_KNOWN_LOCATIONS.put(userId, location);
 	}
 

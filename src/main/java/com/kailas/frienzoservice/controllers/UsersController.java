@@ -3,6 +3,7 @@ package com.kailas.frienzoservice.controllers;
 import static com.kailas.frienzoservice.util.FrienzoURIConstants.*;
 
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.kailas.frienzoservice.exceptions.ResourceNotFoundException;
+import com.kailas.frienzoservice.model.Location;
 import com.kailas.frienzoservice.model.User;
 import com.kailas.frienzoservice.persistance.DatabaseManager;
 
@@ -25,10 +28,15 @@ public class UsersController {
 
 	@RequestMapping(value = USER_SERVICE_URI_UPDATE, method = RequestMethod.POST)
 	public @ResponseBody User updateUser(@RequestBody User user)
-			throws FileNotFoundException {
+			 {
 		logger.info("Adding User with Id: " + user.getId());
 
-		DatabaseManager.getInstance().addUser(user);
+		try {
+			DatabaseManager.getInstance().addUser(user);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return user;
 
 		// throw new RuntimeException("Fail");
@@ -37,9 +45,13 @@ public class UsersController {
 	@RequestMapping(value = USER_SERVICE_URI_GET, method = RequestMethod.GET)
 	public @ResponseBody User getUser(@PathVariable("id") String id)
 			throws FileNotFoundException {
-		logger.info("Getting User with Id: " + id);
+		logger.info("Getting User with Id   :- " + id);
 
-		return DatabaseManager.getInstance().getUser(id);
+		User user =  DatabaseManager.getInstance().getUser(id);
+		System.out.println(user);
+		if( user == null )
+			throw new ResourceNotFoundException("User with id: "+ id + " doesn't exist");
+		return user;
 		// throw new RuntimeException("Fail");
 	}
 

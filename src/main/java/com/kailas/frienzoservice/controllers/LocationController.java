@@ -37,4 +37,5 @@ public class LocationController {
 		return location;
 	}
 
+
 }
