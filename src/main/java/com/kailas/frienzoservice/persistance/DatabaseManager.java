@@ -18,9 +18,9 @@ import com.kailas.frienzoservice.model.User;
 
 public class DatabaseManager {
 
-	private static final String USER_DB_STORE = "C:/Code/Users.csv";
+	private static final String USER_DB_STORE = "Users.csv";
 
-	private static final String LOCATION_DB_STORE = "C:/Code/Location.csv";
+	private static final String LOCATION_DB_STORE = "Location.csv";
 
 	private static File USER_DB;
 	private static File LOCATION_DB;
